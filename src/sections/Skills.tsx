@@ -1,4 +1,4 @@
-import { Container, Title, Text, Grid, Box, Group, SimpleGrid } from '@mantine/core';
+import { Container, Title, Text, Box, Group, SimpleGrid } from '@mantine/core';
 import {
     IconCloud,
     IconGitBranch,

@@ -1,7 +1,7 @@
 import '@mantine/core/styles.css';
 import './styles/global.css';
 
-import { MantineProvider, ColorSchemeScript } from '@mantine/core';
+import { MantineProvider } from '@mantine/core';
 import { theme } from './styles/theme';
 import { Navbar, Footer } from './components';
 import { Hero, About, Skills, Experience, Projects, Certifications, Contact } from './sections';

@@ -1,5 +1,5 @@
 import { Container, Title, Text, Group, Button, Box, Stack } from '@mantine/core';
-import { IconArrowDown, IconBrandLinkedin, IconDownload } from '@tabler/icons-react';
+import { IconArrowDown, IconBrandLinkedin } from '@tabler/icons-react';
 import { motion } from 'framer-motion';
 import { profile } from '../data/profile';
 

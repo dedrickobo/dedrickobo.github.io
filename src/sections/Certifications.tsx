@@ -1,4 +1,4 @@
-import { Container, Title, Text, Box, Group, Badge, SimpleGrid, Image } from '@mantine/core';
+import { Container, Title, Text, Box, Group, Badge, SimpleGrid } from '@mantine/core';
 import { IconCertificate, IconCalendar } from '@tabler/icons-react';
 import { motion } from 'framer-motion';
 import { certifications } from '../data/profile';
