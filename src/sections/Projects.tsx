@@ -9,6 +9,7 @@ const projects = [
         tags: ["Azure", "AWS", "Terraform", "High Availability"],
         icon: IconCloud,
         color: "blue",
+        slideNumber: 1, // Links to title slide (no dedicated slide yet)
     },
     {
         title: "CI/CD Pipeline Automation",
@@ -16,6 +17,7 @@ const projects = [
         tags: ["Jenkins", "Azure DevOps", "Docker", "Git"],
         icon: IconServer,
         color: "cyan",
+        slideNumber: 3,
     },
     {
         title: "Monitoring & Alerting System",
@@ -23,6 +25,7 @@ const projects = [
         tags: ["Zabbix", "Grafana", "ELK Stack"],
         icon: IconDatabase,
         color: "orange",
+        slideNumber: 8,
     },
     {
         title: "DevOps Infrastructure Template",
@@ -30,6 +33,7 @@ const projects = [
         tags: ["Docker", "AI Integration", "Traefik", "Prometheus", "Template"],
         icon: IconShield,
         color: "green",
+        slideNumber: 4,
     },
     {
         title: "Kopitiam Dewi",
@@ -37,6 +41,7 @@ const projects = [
         tags: ["Kotlin", "Android Studio", "Mobile App", "Firebase"],
         icon: IconDeviceMobile,
         color: "violet",
+        slideNumber: 2,
     },
     {
         title: "Cloud Architecture Designs",
@@ -44,6 +49,7 @@ const projects = [
         tags: ["AWS", "VPC", "ELB", "RDS", "Architecture"],
         icon: IconTopologyStar,
         color: "teal",
+        slideNumber: 7,
     },
 ];
 
@@ -72,31 +78,38 @@ export function Projects() {
                             transition={{ duration: 0.5, delay: index * 0.1 }}
                             viewport={{ once: true }}
                         >
-                            <Box className="glass-card" p="xl" h="100%">
-                                <Group gap="md" mb="md">
-                                    <ThemeIcon
-                                        size="xl"
-                                        radius="md"
-                                        variant="gradient"
-                                        gradient={{ from: 'brand', to: 'accent', deg: 135 }}
-                                    >
-                                        <project.icon size={24} />
-                                    </ThemeIcon>
-                                    <Title order={4}>{project.title}</Title>
-                                </Group>
+                            <a
+                                href={`https://docs.google.com/presentation/d/1WCqIPD8nUZZ9g2wZEFY3esKntoLp0iAgOOGtHuTY7uI/edit#slide=id.p${project.slideNumber}`}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                style={{ textDecoration: 'none', color: 'inherit', display: 'block', height: '100%' }}
+                            >
+                                <Box className="glass-card" p="xl" h="100%" style={{ cursor: 'pointer', transition: 'transform 0.2s, box-shadow 0.2s' }}>
+                                    <Group gap="md" mb="md">
+                                        <ThemeIcon
+                                            size="xl"
+                                            radius="md"
+                                            variant="gradient"
+                                            gradient={{ from: 'brand', to: 'accent', deg: 135 }}
+                                        >
+                                            <project.icon size={24} />
+                                        </ThemeIcon>
+                                        <Title order={4}>{project.title}</Title>
+                                    </Group>
 
-                                <Text size="sm" c="dimmed" mb="lg" style={{ lineHeight: 1.7 }}>
-                                    {project.description}
-                                </Text>
+                                    <Text size="sm" c="dimmed" mb="lg" style={{ lineHeight: 1.7 }}>
+                                        {project.description}
+                                    </Text>
 
-                                <Group gap="xs">
-                                    {project.tags.map((tag) => (
-                                        <Badge key={tag} variant="light" color="brand" size="sm">
-                                            {tag}
-                                        </Badge>
-                                    ))}
-                                </Group>
-                            </Box>
+                                    <Group gap="xs">
+                                        {project.tags.map((tag) => (
+                                            <Badge key={tag} variant="light" color="brand" size="sm">
+                                                {tag}
+                                            </Badge>
+                                        ))}
+                                    </Group>
+                                </Box>
+                            </a>
                         </motion.div>
                     ))}
                 </SimpleGrid>
