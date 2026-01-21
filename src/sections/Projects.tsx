@@ -2,6 +2,8 @@ import { Container, Title, Text, Box, Group, Badge, SimpleGrid, ThemeIcon } from
 import { IconServer, IconCloud, IconShield, IconDatabase, IconDeviceMobile, IconTopologyStar } from '@tabler/icons-react';
 import { motion } from 'framer-motion';
 
+const SLIDES_URL = "https://docs.google.com/presentation/d/1WCqIPD8nUZZ9g2wZEFY3esKntoLp0iAgOOGtHuTY7uI/edit?usp=sharing";
+
 const projects = [
     {
         title: "Multi-Cloud Infrastructure",
@@ -9,7 +11,6 @@ const projects = [
         tags: ["Azure", "AWS", "Terraform", "High Availability"],
         icon: IconCloud,
         color: "blue",
-        slideNumber: 1, // Links to title slide (no dedicated slide yet)
     },
     {
         title: "CI/CD Pipeline Automation",
@@ -17,7 +18,6 @@ const projects = [
         tags: ["Jenkins", "Azure DevOps", "Docker", "Git"],
         icon: IconServer,
         color: "cyan",
-        slideNumber: 3,
     },
     {
         title: "Monitoring & Alerting System",
@@ -25,7 +25,6 @@ const projects = [
         tags: ["Zabbix", "Grafana", "ELK Stack"],
         icon: IconDatabase,
         color: "orange",
-        slideNumber: 8,
     },
     {
         title: "DevOps Infrastructure Template",
@@ -33,7 +32,6 @@ const projects = [
         tags: ["Docker", "AI Integration", "Traefik", "Prometheus", "Template"],
         icon: IconShield,
         color: "green",
-        slideNumber: 4,
     },
     {
         title: "Kopitiam Dewi",
@@ -41,7 +39,6 @@ const projects = [
         tags: ["Kotlin", "Android Studio", "Mobile App", "Firebase"],
         icon: IconDeviceMobile,
         color: "violet",
-        slideNumber: 2,
     },
     {
         title: "Cloud Architecture Designs",
@@ -49,7 +46,6 @@ const projects = [
         tags: ["AWS", "VPC", "ELB", "RDS", "Architecture"],
         icon: IconTopologyStar,
         color: "teal",
-        slideNumber: 7,
     },
 ];
 
@@ -79,7 +75,7 @@ export function Projects() {
                             viewport={{ once: true }}
                         >
                             <a
-                                href={`https://docs.google.com/presentation/d/1WCqIPD8nUZZ9g2wZEFY3esKntoLp0iAgOOGtHuTY7uI/edit#slide=id.p${project.slideNumber}`}
+                                href={SLIDES_URL}
                                 target="_blank"
                                 rel="noopener noreferrer"
                                 style={{ textDecoration: 'none', color: 'inherit', display: 'block', height: '100%' }}
