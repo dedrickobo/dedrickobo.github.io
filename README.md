@@ -75,11 +75,6 @@ portfolio/
 ## 🎨 Design Decisions
 
 ### UI Library: Mantine
-Chose Mantine over shadcn/ui for:
-- Built-in component library (faster development)
-- Excellent TypeScript support
-- Easy theming and customization
-- Great dark mode implementation
 
 ### Color Scheme
 - Primary: Blue gradient (#0969ff → #00dcea)
@@ -128,4 +123,4 @@ MIT License - feel free to use this template for your own portfolio!
 
 ---
 
-Built with ❤️ by Dedrick D.
+
