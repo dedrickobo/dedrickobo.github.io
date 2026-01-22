@@ -2,7 +2,6 @@
 
 A modern, responsive portfolio website built with React, TypeScript, and Mantine UI.
 
-![Preview](preview.png)
 
 ## 🚀 Quick Start
 
