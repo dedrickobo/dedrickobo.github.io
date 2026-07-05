@@ -1,55 +1,76 @@
 # Design
 
-## Theme
+## Concept: The Journey
 
-Dark-only. The scene: an operator at a terminal at night — focused, intense. Crimson on near-black ink. **Committed** color strategy (crimson is the voice, ~30–50% of accent surface), not a restrained one-accent product palette.
+The site is a place, not a page. A Dark Souls-inspired nightscape rendered in a
+single fixed WebGL canvas behind the DOM: scrolling walks the camera down a dead
+pilgrim road; each section is a station you arrive at. Content (DOM) overlays the
+world and stays fully readable and accessible.
+
+## The world (`src/three/`)
+
+- **`road.ts`** — the world-space contract: one station per DOM section, marching
+  down -Z (`SEGMENT` apart). A future "Hub" navigation model can fly the rig to
+  any station pose directly.
+- **`Rig.tsx`** — scroll-driven camera: walks the road with a soft gait weave and
+  damped mouse-look.
+- **`Journey.tsx`** — the world: gradient sky, **eclipsed sun** (shader corona),
+  fog + fog gates at area boundaries, jagged crag instances, broken arch with
+  tattered banners (cloth shader) and sagging chains, broken colonnade,
+  grave-blades, soul orbs, candle clusters, ground mist, drifting ash motes, and
+  a camera-following **Lothric skyline** with circling crows that never gets closer.
+- **`Bonfire.tsx`** — the true bonfire: procedural **coiled sword** (twisted-ribbon
+  geometry, heat-emissive base), ash mound piled with femurs/ribs/skulls, layered
+  fire (volumetric flame sheets + noise-eroded particles + smoke + embers),
+  flickering light. One at the hero, one at Contact.
+- **`Brand.tsx`** — the Brand of Sacrifice extruded from `public/brandofsacrifice.svg`,
+  breathing above the hero fire (scale pulse + bob, never spinning).
+- **`Scene.tsx`** — composer: fog, lights, **Bloom + Vignette** post (full tier),
+  4x MSAA.
+- **`tier.ts`** — `full` / `lite` / `off`: reduced-motion or no-WebGL gets the CSS
+  backdrop only; weak/coarse-pointer devices get reduced counts and no post.
+- Textures: CC0 ambientCG PBR maps (`public/textures/`, compressed to ~320KB total):
+  Rock058 on crags/arch/monoliths, Ground081 on the road. Everything else procedural.
+- The whole 3D layer is lazy-loaded after first paint (`React.lazy`).
 
 ## Color
 
-All values OKLCH. Defined as CSS custom properties in `src/styles/global.css`; a matching crimson tuple lives in the Mantine theme.
+OKLCH custom properties in `src/styles/global.css`. Black-and-white ink system
+with **blood red as the single accent**; the warm fire/dusk palette lives only
+inside the WebGL world.
 
-| Token | OKLCH | Role |
-|---|---|---|
-| `--ink` | `oklch(0.155 0.012 20)` | Page background — near-black with a whispered red |
-| `--ink-raised` | `oklch(0.195 0.014 20)` | Raised surface (panels, the few cards that earn it) |
-| `--ink-sunken` | `oklch(0.125 0.012 20)` | Recessed wells (code blocks, diagram bg) |
-| `--hair` | `oklch(0.72 0.02 25 / 0.14)` | Hairline borders (1px) |
-| `--crimson` | `oklch(0.585 0.205 23)` | Primary brand — accents, large headings, links |
-| `--crimson-bright` | `oklch(0.66 0.225 26)` | Hover / emphasis |
-| `--blood` | `oklch(0.40 0.16 22)` | Deep blood-red — rails, deep fills |
-| `--ember` | `oklch(0.74 0.155 60)` | Amber micro-accent — "live / current / alert" states only (a nod to observability) |
-| `--bone` | `oklch(0.95 0.008 60)` | Primary text |
-| `--ash` | `oklch(0.80 0.010 40)` | Secondary text (≥4.5:1 on ink) |
-| `--ash-dim` | `oklch(0.66 0.012 40)` | Meta / labels, large or non-essential only |
-
-Contrast: `--bone` and `--ash` clear AA for body on `--ink`; `--crimson` is reserved for ≥18px / headings / accents (≈4:1), never small body copy.
+Key tokens: `--ink-*` (near-black surfaces), `--bone` (primary text),
+`--ash` / `--ash-dim` (secondary text), `--blood` / `--blood-bright` (the accent),
+`--line` (hairlines). Body text ≥4.5:1 on ink.
 
 ## Typography
 
-Self-hosted via `@fontsource` (no external CDN). Inter is **dropped** (AI default).
+Self-hosted via `@fontsource`.
 
-- **Sans (display + body): Hanken Grotesk.** One family, contrast by weight — 800/700 for display, 600 for subheads, 400/500 for body. Avoids the two-similar-sans trap.
-- **Mono: JetBrains Mono.** Carried over from the GitHub README for identity continuity. Used *only* for genuinely technical content — metrics, version tags, the status line, code, IaC snippets. Never decorative.
-- Scale: fluid `clamp()`, ≥1.25 ratio. Display ceiling ≤ 6rem. Letter-spacing on big display ≈ -0.03em (floor -0.04em). `text-wrap: balance` on h1–h3, `pretty` on prose. Line length capped 65–75ch. Light-on-dark line-height bumped ~+0.05.
-
-## Radius & shape
-
-Sharp. `defaultRadius` small (4px). The crimson/blade identity wants edges, not pillowy 16px cards.
+- **Display: Cinzel** — engraved Souls-style capitals for the name and section titles.
+- **Body: Hanken Grotesk** — 400/500 body, 600–700 subheads.
+- **Mono: JetBrains Mono** — technical content only (status line, dates, chips, labels).
+- Fluid `clamp()` scale; `text-wrap: balance` on headings, `pretty` on prose.
 
 ## Components & layout
 
-- **No glassmorphism, no gradient text, no side-stripe borders** (removed from the old build).
-- Panels: flat `--ink-raised` with a 1px `--hair` border; hover lifts border to crimson + subtle translate. Used sparingly — cards are the lazy answer.
-- Section rhythm via fluid `clamp()` spacing; vary tight/loose for cadence.
-- Featured project case studies are long-form, full-width, with a **custom SVG architecture diagram** (imagery is mandatory on a brand surface; the diagram is the hero image).
-- Responsive grids: `repeat(auto-fit, minmax(280px, 1fr))`.
+- Panels: flat near-black with 1px hairline borders; hover sharpens the border to blood.
+- Featured case studies (aform, procal-infra) carry custom SVG architecture diagrams.
+- Grain, halftone, and crosshatch textures overlay the page; a custom blood
+  dot + trailing-ring cursor (fine pointers only).
+- Responsive grids via `repeat(auto-fit, minmax(280px, 1fr))`; no horizontal overflow
+  at 375px.
 
 ## Motion
 
-Framer Motion (already a dependency). One orchestrated hero entrance; restrained per-section reveals that enhance an already-visible default. `useReducedMotion` collapses everything to instant. Ease-out-expo curves, no bounce. Scroll-linked accents kept minimal.
+- Lenis smooth scroll, synced to GSAP ScrollTrigger; the same scroll drives the
+  WebGL camera.
+- Framer Motion reveals enhance already-visible content; `useReducedMotion`
+  collapses everything to instant, and the reduced-motion tier disables the
+  entire WebGL layer.
 
 ## Signature elements
 
-- "Mediocrity is a sin." as a recurring signature line.
-- The *Brand of Sacrifice* mark (`public/brandofsacrifice.svg`) as a subtle backdrop watermark / favicon, not a loud logo.
-- Mono "status line" in the hero (e.g. `● available · Batam, ID · UTC+7`).
+- "Mediocrity is a sin." as the recurring signature line.
+- The Brand of Sacrifice above the first bonfire and as favicon.
+- Mono status line in the hero (`● Open to DevOps/Cloud/SRE roles · Batam, ID · UTC+7`).

@@ -2,30 +2,6 @@ import { motion, useReducedMotion } from 'framer-motion';
 import { IconArrowDown, IconArrowRight, IconMail } from '@tabler/icons-react';
 import { profile } from '../data/profile';
 
-function HeroBackdrop() {
-    return (
-        <svg
-            aria-hidden
-            viewBox="0 0 600 600"
-            preserveAspectRatio="xMidYMid slice"
-            style={{
-                position: 'absolute', right: '-10%', top: '50%', transform: 'translateY(-50%)',
-                width: 'min(62vw, 700px)', height: 'min(62vw, 700px)', opacity: 0.6, pointerEvents: 'none', zIndex: 0,
-            }}
-        >
-            {[268, 206, 144, 86].map((r, i) => (
-                <circle key={r} cx="300" cy="300" r={r} fill="none" stroke="var(--blood)" strokeWidth="1" strokeOpacity={0.12 + i * 0.05} />
-            ))}
-            {[[300, 36], [300, 564], [36, 300], [564, 300], [112, 112], [488, 488], [488, 112], [112, 488]].map(([cx, cy], i) => (
-                <g key={i}>
-                    <line x1="300" y1="300" x2={cx} y2={cy} stroke="var(--line-2)" strokeWidth="1" />
-                    <circle cx={cx} cy={cy} r="3" fill="var(--blood)" fillOpacity="0.6" />
-                </g>
-            ))}
-        </svg>
-    );
-}
-
 export function Hero() {
     const reduce = useReducedMotion();
     const anim = (delay: number) =>
@@ -35,33 +11,14 @@ export function Hero() {
             transition: { duration: 0.7, ease: [0.16, 1, 0.3, 1] as const, delay },
         };
 
-    const persona = (
-        <div style={{ position: 'relative' }}>
-            <div style={{ position: 'relative', overflow: 'hidden', border: '1px solid var(--blood)', boxShadow: '0 0 60px oklch(0.33 0.14 24 / 0.5)' }}>
-                <img
-                    src="/saber-alter.webp"
-                    alt="Saber Alter, Dedrick's chosen persona, rendered in black and white"
-                    className="inked"
-                    style={{ width: '100%', display: 'block' }}
-                />
-                <div aria-hidden style={{ position: 'absolute', inset: 0, background: 'linear-gradient(180deg, transparent 42%, var(--ink-0) 100%), oklch(0.33 0.14 24 / 0.22)' }} />
-            </div>
-            <div aria-hidden style={{ position: 'absolute', top: -1, left: -1, width: 20, height: 20, borderTop: '2px solid var(--blood)', borderLeft: '2px solid var(--blood)' }} />
-            <div aria-hidden style={{ position: 'absolute', bottom: -1, right: -1, width: 20, height: 20, borderBottom: '2px solid var(--blood)', borderRight: '2px solid var(--blood)' }} />
-            <p className="mono" style={{ color: 'var(--ash-dim)', fontSize: '0.72rem', margin: '0.6rem 0 0' }}>
-                // persona · saber alter
-            </p>
-        </div>
-    );
-
     return (
         <section
             id="hero"
             style={{ minHeight: '100svh', display: 'flex', alignItems: 'center', position: 'relative', overflow: 'hidden', paddingTop: '6rem', paddingBottom: '3rem' }}
         >
-            <HeroBackdrop />
-            <div className="container hero-grid" style={{ position: 'relative', zIndex: 1 }}>
-                <div>
+            <div className="container" style={{ position: 'relative', zIndex: 1 }}>
+                {/* Text holds the left; the 3D Brand of Sacrifice breathes in the right field. */}
+                <div style={{ maxWidth: 640 }}>
                     <motion.div {...anim(0.05)}>
                         <p className="mono" style={{ display: 'flex', alignItems: 'center', gap: '0.6ch', fontSize: '0.85rem', color: 'var(--ash)', margin: '0 0 1.6rem' }}>
                             <span style={{ width: 8, height: 8, borderRadius: '50%', background: 'var(--blood)', boxShadow: '0 0 10px var(--blood)' }} />
@@ -108,12 +65,6 @@ export function Hero() {
                         </div>
                     </motion.div>
                 </div>
-
-                {reduce ? persona : (
-                    <motion.div initial={{ opacity: 0, scale: 0.96 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }}>
-                        {persona}
-                    </motion.div>
-                )}
             </div>
 
             {!reduce && (
