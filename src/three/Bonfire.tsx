@@ -1,5 +1,5 @@
 import { useMemo, useRef } from 'react';
-import { useFrame } from '@react-three/fiber';
+import { useFrame, useLoader } from '@react-three/fiber';
 import * as THREE from 'three';
 import { Embers } from './Embers';
 
@@ -309,10 +309,32 @@ function hash2(x: number, z: number) {
     return s - Math.floor(s);
 }
 
-const ASH = new THREE.MeshStandardMaterial({ color: '#464039', roughness: 1 });
 const BONE = new THREE.MeshStandardMaterial({ color: '#6e675c', roughness: 0.9 });
 
 function AshMound() {
+    const [groundNormal, groundRough] = useLoader(THREE.TextureLoader, [
+        '/textures/ground_normal.jpg',
+        '/textures/ground_rough.jpg',
+    ]);
+
+    // clone: the road shares these maps at a very different tiling
+    const ASH = useMemo(() => {
+        const n = groundNormal.clone();
+        const r = groundRough.clone();
+        for (const t of [n, r]) {
+            t.wrapS = t.wrapT = THREE.RepeatWrapping;
+            t.repeat.set(2.5, 1.5);
+            t.needsUpdate = true;
+        }
+        return new THREE.MeshStandardMaterial({
+            color: '#57504a',
+            normalMap: n,
+            normalScale: new THREE.Vector2(0.9, 0.9),
+            roughnessMap: r,
+            roughness: 1,
+        });
+    }, [groundNormal, groundRough]);
+
     const geometry = useMemo(() => {
         const g = new THREE.SphereGeometry(1, 36, 22);
         const pos = g.attributes.position as THREE.BufferAttribute;

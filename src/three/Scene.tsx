@@ -24,9 +24,9 @@ export default function Scene({ tier }: { tier: Exclude<GfxTier, 'off'> }) {
             >
                 <color attach="background" args={['#0b0708']} />
                 <fogExp2 attach="fog" args={['#0e0708', 0.022]} />
-                <ambientLight intensity={0.22} color="#38303a" />
-                {/* moonlight: pale, cold, from high left */}
-                <directionalLight position={[-30, 40, -60]} intensity={0.55} color="#5c5560" />
+                <ambientLight intensity={0.26} color="#38303a" />
+                {/* eclipse-light: pale, cold, from high left; strong enough to catch the normal maps */}
+                <directionalLight position={[-30, 40, -60]} intensity={0.85} color="#5c5560" />
                 <Rig />
                 <Suspense fallback={null}>
                     <Journey tier={tier} />

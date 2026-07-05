@@ -540,36 +540,44 @@ export function Journey({ tier }: { tier: 'full' | 'lite' }) {
     const z = (i: number) => STATIONS[i].z;
     const emberCount = tier === 'full' ? 110 : 60;
 
-    const [rockColor, rockNormal, groundColor, groundNormal] = useLoader(THREE.TextureLoader, [
-        '/textures/rock_color.jpg',
-        '/textures/rock_normal.jpg',
-        '/textures/ground_color.jpg',
-        '/textures/ground_normal.jpg',
-    ]);
+    const [rockColor, rockNormal, rockRough, rockAO, groundColor, groundNormal, groundRough, groundAO] =
+        useLoader(THREE.TextureLoader, [
+            '/textures/rock_color.jpg',
+            '/textures/rock_normal.jpg',
+            '/textures/rock_rough.jpg',
+            '/textures/rock_ao.jpg',
+            '/textures/ground_color.jpg',
+            '/textures/ground_normal.jpg',
+            '/textures/ground_rough.jpg',
+            '/textures/ground_ao.jpg',
+        ]);
 
     useMemo(() => {
-        for (const t of [rockColor, rockNormal, groundColor, groundNormal]) {
+        const rockSet = [rockColor, rockNormal, rockRough, rockAO];
+        const groundSet = [groundColor, groundNormal, groundRough, groundAO];
+        for (const t of [...rockSet, ...groundSet]) {
             t.wrapS = t.wrapT = THREE.RepeatWrapping;
             t.needsUpdate = true;
         }
         rockColor.colorSpace = THREE.SRGBColorSpace;
         groundColor.colorSpace = THREE.SRGBColorSpace;
-        rockColor.repeat.set(2.5, 2.5);
-        rockNormal.repeat.set(2.5, 2.5);
-        groundColor.repeat.set(14, 68);
-        groundNormal.repeat.set(14, 68);
-    }, [rockColor, rockNormal, groundColor, groundNormal]);
+        rockSet.forEach((t) => t.repeat.set(2.5, 2.5));
+        groundSet.forEach((t) => t.repeat.set(14, 68));
+    }, [rockColor, rockNormal, rockRough, rockAO, groundColor, groundNormal, groundRough, groundAO]);
 
     const ROCK = useMemo(
         () =>
             new THREE.MeshStandardMaterial({
-                color: '#655a5e',
+                color: '#6b6064',
                 map: rockColor,
                 normalMap: rockNormal,
-                normalScale: new THREE.Vector2(1.15, 1.15),
+                normalScale: new THREE.Vector2(1.3, 1.3),
+                roughnessMap: rockRough,
                 roughness: 1,
+                aoMap: rockAO,
+                aoMapIntensity: 1,
             }),
-        [rockColor, rockNormal]
+        [rockColor, rockNormal, rockRough, rockAO]
     );
 
     const cragGeo = useMemo(() => makeCragGeometry(1), []);
@@ -628,11 +636,14 @@ export function Journey({ tier }: { tier: 'full' | 'lite' }) {
             {/* ground */}
             <mesh geometry={groundGeo} rotation={[-Math.PI / 2, 0, 0]} position={[0, 0, -80]}>
                 <meshStandardMaterial
-                    color="#5a5049"
+                    color="#5f544c"
                     map={groundColor}
                     normalMap={groundNormal}
-                    normalScale={new THREE.Vector2(0.9, 0.9)}
+                    normalScale={new THREE.Vector2(1.15, 1.15)}
+                    roughnessMap={groundRough}
                     roughness={1}
+                    aoMap={groundAO}
+                    aoMapIntensity={1}
                 />
             </mesh>
 
