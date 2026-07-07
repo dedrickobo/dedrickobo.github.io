@@ -52,13 +52,7 @@ export function Hero() {
                         </p>
                     </motion.div>
 
-                    <motion.div {...anim(0.6)}>
-                        <div style={{ borderLeft: '2px solid var(--blood)', paddingLeft: '1rem', margin: '1.75rem 0 0' }}>
-                            <p className="mono" style={{ color: 'var(--blood-bright)', fontSize: '0.95rem', margin: 0 }}>{profile.signature}</p>
-                        </div>
-                    </motion.div>
-
-                    <motion.div {...anim(0.72)}>
+                    <motion.div {...anim(0.62)}>
                         <div style={{ display: 'flex', gap: '0.9rem', flexWrap: 'wrap', margin: '1.75rem 0 0' }}>
                             <a href="#projects" className="btn btn-blood">View work <IconArrowRight size={17} /></a>
                             <a href="#contact" className="btn btn-ghost"><IconMail size={17} /> Get in touch</a>

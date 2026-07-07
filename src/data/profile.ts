@@ -6,7 +6,6 @@ export const profile = {
     "DevOps Engineer @ Apple DevOps Institute · AWS Solutions Architect · RHCSA · CCNA",
   tagline:
     "Building reliable, scalable, and efficient systems through automation and modern deployment practices.",
-  signature: "Mediocrity is a sin.",
   location: "Batam, Riau Islands, Indonesia",
   timezone: "UTC+7",
   availability: "Open to DevOps / Cloud / SRE roles",

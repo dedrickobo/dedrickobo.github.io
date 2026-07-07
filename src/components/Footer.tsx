@@ -17,10 +17,7 @@ export function Footer() {
                 }}
             >
                 <div>
-                    <p className="mono" style={{ color: 'var(--blood-bright)', fontSize: '0.9rem', margin: 0 }}>
-                        “{profile.signature}”
-                    </p>
-                    <p style={{ color: 'var(--ash-dim)', fontSize: '0.85rem', margin: '0.4rem 0 0' }}>
+                    <p style={{ color: 'var(--ash-dim)', fontSize: '0.85rem', margin: 0 }}>
                         © {year} {profile.name} · Forged with intent.
                     </p>
                 </div>
