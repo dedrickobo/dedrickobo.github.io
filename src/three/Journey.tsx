@@ -49,44 +49,15 @@ const skyVertex = /* glsl */ `
     }
 `;
 const skyFragment = /* glsl */ `
-    uniform float uFlash;
     varying vec3 vPos;
     void main() {
         float h = normalize(vPos).y;
         vec3 zenith  = vec3(0.014, 0.009, 0.011);
         vec3 horizon = vec3(0.085, 0.032, 0.036);
         vec3 col = mix(horizon, zenith, smoothstep(-0.05, 0.40, h));
-        // distant lightning: a cold breath across the sky
-        col += vec3(0.15, 0.18, 0.26) * uFlash * (0.35 + 0.65 * smoothstep(-0.1, 0.35, h));
         gl_FragColor = vec4(col, 1.0);
     }
 `;
-
-/* ── silent lightning far behind the keep ── */
-function Lightning({ skyUniforms }: { skyUniforms: { uFlash: { value: number } } }) {
-    const light = useRef<THREE.DirectionalLight>(null);
-    const st = useRef({ t: 0, next: 9 + Math.random() * 16, flash: 0 });
-    useFrame((_, delta) => {
-        const s = st.current;
-        if (s.flash > 0) {
-            s.flash = Math.max(0, s.flash - delta);
-            const p = 1 - s.flash / 0.65;
-            const env = Math.max(0, Math.sin(p * Math.PI * 3)) * (1 - p * 0.8);
-            if (light.current) light.current.intensity = env * 1.5;
-            skyUniforms.uFlash.value = env;
-        } else {
-            s.t += delta;
-            if (s.t >= s.next) {
-                s.t = 0;
-                s.next = 18 + Math.random() * 22;
-                s.flash = 0.65;
-            }
-            if (light.current && light.current.intensity > 0) light.current.intensity = 0;
-            if (skyUniforms.uFlash.value > 0) skyUniforms.uFlash.value = 0;
-        }
-    });
-    return <directionalLight ref={light} position={[24, 32, -110]} intensity={0} color="#cfe0ff" />;
-}
 
 /* ── the eclipsed sun: a dark disc ringed by a wavering corona ── */
 const eclipseVertex = /* glsl */ `
@@ -139,37 +110,24 @@ const eclipseFragment = /* glsl */ `
     }
 `;
 
-function Eclipse({
-    position,
-    onSunReady,
-}: {
-    position: [number, number, number];
-    onSunReady?: (m: THREE.Mesh) => void;
-}) {
+function Eclipse({ position }: { position: [number, number, number] }) {
     const mat = useRef<THREE.ShaderMaterial>(null);
     const uniforms = useMemo(() => ({ uTime: { value: 0 } }), []);
     useFrame((state) => {
         if (mat.current) mat.current.uniforms.uTime.value = state.clock.elapsedTime;
     });
     return (
-        <group position={position}>
-            {/* the corona annulus doubles as the god-rays light source */}
-            <mesh position={[0, 0, -0.6]} ref={(m) => { if (m) onSunReady?.(m); }}>
-                <ringGeometry args={[5.7, 7.3, 48]} />
-                <meshBasicMaterial color="#ffd9a0" toneMapped={false} depthWrite={false} />
-            </mesh>
-            <mesh>
-                <planeGeometry args={[26, 26]} />
-                <shaderMaterial
-                    ref={mat}
-                    vertexShader={eclipseVertex}
-                    fragmentShader={eclipseFragment}
-                    uniforms={uniforms}
-                    transparent
-                    depthWrite={false}
-                />
-            </mesh>
-        </group>
+        <mesh position={position}>
+            <planeGeometry args={[26, 26]} />
+            <shaderMaterial
+                ref={mat}
+                vertexShader={eclipseVertex}
+                fragmentShader={eclipseFragment}
+                uniforms={uniforms}
+                transparent
+                depthWrite={false}
+            />
+        </mesh>
     );
 }
 
@@ -230,19 +188,16 @@ function Graves() {
 }
 
 /* ── a soul, left where somebody fell ── */
-function SoulOrb({ position, lit = false }: { position: [number, number, number]; lit?: boolean }) {
+function SoulOrb({ position }: { position: [number, number, number] }) {
     const core = useRef<THREE.MeshBasicMaterial>(null);
     const halo = useRef<THREE.MeshBasicMaterial>(null);
-    const lamp = useRef<THREE.PointLight>(null);
     useFrame((s) => {
         const a = 0.55 + 0.3 * Math.sin(s.clock.elapsedTime * 1.6 + position[2]);
         if (core.current) core.current.opacity = a;
         if (halo.current) halo.current.opacity = a * 0.2;
-        if (lamp.current) lamp.current.intensity = a * 0.9;
     });
     return (
         <group position={position}>
-            {lit && <pointLight ref={lamp} color="#bfffd9" intensity={0.6} distance={3.5} decay={2} />}
             <mesh>
                 <sphereGeometry args={[0.07, 8, 8]} />
                 <meshBasicMaterial ref={core} color="#e8fff2" transparent blending={THREE.AdditiveBlending} depthWrite={false} toneMapped={false} />
@@ -330,9 +285,8 @@ function Chain({ from, to }: { from: [number, number, number]; to: [number, numb
 }
 
 /* ── candles guttering by the graves ── */
-function Candles({ position, lit = false }: { position: [number, number, number]; lit?: boolean }) {
+function Candles({ position }: { position: [number, number, number] }) {
     const glowRefs = useRef<(THREE.MeshBasicMaterial | null)[]>([]);
-    const lamp = useRef<THREE.PointLight>(null);
     const sticks = useMemo(
         () =>
             [0, 1, 2, 3].map((i) => ({
@@ -347,12 +301,10 @@ function Candles({ position, lit = false }: { position: [number, number, number]
         glowRefs.current.forEach((m, i) => {
             if (m) m.opacity = 0.5 + 0.3 * Math.sin(t * (6 + i) + i * 9.1) * Math.sin(t * 2.3 + i);
         });
-        if (lamp.current) lamp.current.intensity = 0.85 + 0.3 * Math.sin(t * 5.7 + position[2]) * Math.sin(t * 2.1);
     });
     const WAX = useMemo(() => new THREE.MeshStandardMaterial({ color: '#57504a', roughness: 0.9 }), []);
     return (
         <group position={position}>
-            {lit && <pointLight ref={lamp} position={[0, 0.35, 0]} color="#ff9a4a" intensity={1} distance={2.6} decay={2} />}
             {sticks.map((c, i) => (
                 <group key={i} position={[c.x, 0, c.z]}>
                     <mesh material={WAX} position={[0, c.h / 2, 0]}>
@@ -584,16 +536,9 @@ function AshMotes({ count }: { count: number }) {
 }
 
 /* ── the world ── */
-export function Journey({
-    tier,
-    onSunReady,
-}: {
-    tier: 'full' | 'lite';
-    onSunReady?: (m: THREE.Mesh) => void;
-}) {
+export function Journey({ tier }: { tier: 'full' | 'lite' }) {
     const z = (i: number) => STATIONS[i].z;
     const emberCount = tier === 'full' ? 110 : 60;
-    const skyUniforms = useMemo(() => ({ uFlash: { value: 0 } }), []);
 
     const [rockColor, rockNormal, rockRough, rockAO, groundColor, groundNormal, groundRough, groundAO] =
         useLoader(THREE.TextureLoader, [
@@ -684,10 +629,9 @@ export function Journey({
             {/* sky + moon */}
             <mesh>
                 <sphereGeometry args={[260, 24, 16]} />
-                <shaderMaterial vertexShader={skyVertex} fragmentShader={skyFragment} uniforms={skyUniforms} side={THREE.BackSide} depthWrite={false} />
+                <shaderMaterial vertexShader={skyVertex} fragmentShader={skyFragment} side={THREE.BackSide} depthWrite={false} />
             </mesh>
-            <Eclipse position={[-50, 52, -150]} onSunReady={onSunReady} />
-            {tier === 'full' && <Lightning skyUniforms={skyUniforms} />}
+            <Eclipse position={[-46, 44, -150]} />
 
             {/* ground */}
             <mesh geometry={groundGeo} rotation={[-Math.PI / 2, 0, 0]} position={[0, 0, -80]}>
@@ -740,16 +684,16 @@ export function Journey({
             <Colonnade material={ROCK} capGeo={cragGeo2} />
 
             {/* candles guttering where someone knelt */}
-            <Candles position={[-4.1, 0, -30.5]} lit={tier === 'full'} />
-            <Candles position={[4.6, 0, -88]} lit={tier === 'full'} />
-            <Candles position={[-3.9, 0, z(4) - 2.2]} lit={tier === 'full'} />
+            <Candles position={[-4.1, 0, -30.5]} />
+            <Candles position={[4.6, 0, -88]} />
+            <Candles position={[-3.9, 0, z(4) - 2.2]} />
 
             {/* the far city, and the dead by the roadside */}
             <Skyline />
             <Graves />
-            <SoulOrb position={[-3.0, 0.3, z(1) - 3.5]} lit={tier === 'full'} />
-            <SoulOrb position={[3.3, 0.28, z(3) - 6]} lit={tier === 'full'} />
-            <SoulOrb position={[2.6, 0.3, z(6) - 1.2]} lit={tier === 'full'} />
+            <SoulOrb position={[-3.0, 0.3, z(1) - 3.5]} />
+            <SoulOrb position={[3.3, 0.28, z(3) - 6]} />
+            <SoulOrb position={[2.6, 0.3, z(6) - 1.2]} />
 
             {/* air: ash motes + pooling mist */}
             <AshMotes count={tier === 'full' ? 260 : 110} />
@@ -765,7 +709,7 @@ export function Journey({
                 />
             ))}
 
-            {/* fog gates at area boundaries, lit faintly from within */}
+            {/* fog gates at area boundaries */}
             {STATIONS.slice(1).map((s) => (
                 <MistPlane
                     key={s.id}
@@ -777,17 +721,6 @@ export function Journey({
                     seed={Math.abs(s.z)}
                 />
             ))}
-            {tier === 'full' &&
-                STATIONS.slice(1).map((s) => (
-                    <pointLight
-                        key={`glow-${s.id}`}
-                        position={[0, 2.4, s.z + SEGMENT / 2]}
-                        color="#6e1a20"
-                        intensity={1.4}
-                        distance={8}
-                        decay={2}
-                    />
-                ))}
 
             {/* ── stations ── */}
             {/* hero: the first bonfire, the Brand above it */}
