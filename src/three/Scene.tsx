@@ -9,7 +9,11 @@ import type { GfxTier } from './tier';
 /**
  * The single WebGL layer for the whole site: a fixed canvas behind the DOM.
  * You are on a road at night. Scrolling walks it. Bloom makes the fire,
- * the Brand, and the moon actually glow; the vignette closes the dark in.
+ * the Brand, and the eclipse glow; the vignette closes the dark in.
+ *
+ * (God rays and an eclipse backlight were tried and rejected: the rays pass
+ * is unreliable across GPUs and washed the scene; the backlight brightened
+ * the left field. Distant lightning survived the cut. Do not re-add rays.)
  */
 export default function Scene({ tier }: { tier: Exclude<GfxTier, 'off'> }) {
     return (
@@ -25,7 +29,7 @@ export default function Scene({ tier }: { tier: Exclude<GfxTier, 'off'> }) {
                 <color attach="background" args={['#0b0708']} />
                 <fogExp2 attach="fog" args={['#0e0708', 0.022]} />
                 <ambientLight intensity={0.26} color="#38303a" />
-                {/* eclipse-light: pale, cold, from high left; strong enough to catch the normal maps */}
+                {/* pale, cold key from high left; strong enough to catch the normal maps */}
                 <directionalLight position={[-30, 40, -60]} intensity={0.85} color="#5c5560" />
                 <Rig />
                 <Suspense fallback={null}>
